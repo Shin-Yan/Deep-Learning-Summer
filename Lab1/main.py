@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import copy
 def generate_linear(n=100):
     pts = np.random.uniform(0,1(n,2))
     inputs = []
@@ -46,3 +47,33 @@ def show_result(x, y, pred_y):
         else:
             plt.plot(x[i][0], x[i][1], 'bo')
     plt.show()
+
+# activation functions
+def sigmoid(x):
+    return 1.0/(1.0 + np.exp(-x))
+
+def derivative_sigmoid(x):
+    return np.multiply(x, 1.0-x)
+
+def tanh(x):
+    return np.tanh(x)
+
+def derivative_tanh(x):
+    return 1.0 - y**2
+
+def relu(x):
+    return np.maximum(0.0, x)
+
+def derivative_relu(x):
+    return np.heaviside(x, 0.0)
+
+def leaky_relu(x):
+    a = 0.005
+    return np.maximum(0.0, x) + a * np.minimum(0.0 ,x)
+
+def derivative_leaky_relu(x):
+    a = 0.005
+    y = copy.deepcopy(x);
+    y[y > 0.0] = 1.0
+    y[y <= 0.0] = a
+    return y 
