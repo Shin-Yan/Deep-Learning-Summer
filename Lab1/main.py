@@ -68,12 +68,12 @@ def derivative_relu(x):
     return np.heaviside(x, 0.0)
 
 def leaky_relu(x):
-    a = 0.005
-    return np.maximum(0.0, x) + a * np.minimum(0.0 ,x)
+    alpha = 0.005
+    return np.maximum(alpha * x, x)
 
 def derivative_leaky_relu(x):
-    a = 0.005
+    alpha = 0.005
     y = copy.deepcopy(x);
     y[y > 0.0] = 1.0
-    y[y <= 0.0] = a
+    y[y <= 0.0] = alpha
     return y 
