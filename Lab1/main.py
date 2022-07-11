@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import copy
 def generate_linear(n=100):
-    pts = np.random.uniform(0,1(n,2))
+    pts = np.random.uniform(0,1,(n,2))
     inputs = []
     labels = []
     for pt in pts:
@@ -77,3 +77,35 @@ def derivative_leaky_relu(x):
     y[y > 0.0] = 1.0
     y[y <= 0.0] = alpha
     return y 
+
+class Layer:
+    def __init__(self, input_num, output_num, activation = 'sigmoid', optimizer = 'gd', learning_rate = 0.05):
+        self.weight = np.random.normal(0,1,(input_num +1 , output_num))
+        self.activation = activation
+        self.optimizer = optimizer
+        self.learning_rate = learning_rate
+
+    def forward_pass(self, inputs):
+        forward_value = np.append(inputs, np.ones((inputs.shape[0],1)),axis = 1)
+        self.forward_output = None
+        if self.activation == 'sigmoid':
+            self.forward_output = sigmoid(np.matmul(forward_value, self.weight))
+
+        return self.forward_output
+
+    def backward_pass(self, inputs):
+        self.backward_output = None
+        if self.activation == 'sigmoid':
+            self.backward_output = np.multiply(derivative_sigmoid(self.forward_output),inputs)
+
+        return np.matmul(self.backward_output, self.weight[:-1].T)
+
+    def learning(self):
+        gradient = np.matmul(self.forward_output.T, self.backward_output)
+        if self.optimizer == 'gd':
+            weight_change = -self.learning_rate * gradient
+        self.weight += weight_change
+
+
+# x1 = generate_XOR_easy()[0]
+# print(np.append(x1,np.ones((x1.shape[0],1)),axis=1))
