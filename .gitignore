@@ -2,3 +2,5 @@ venv/
 mnist_cnn.pt
 data/
 test.py
+XOR*
+linear*
