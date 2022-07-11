@@ -78,8 +78,15 @@ def derivative_leaky_relu(x):
     y[y <= 0.0] = alpha
     return y 
 
+#loss functions
+def mse_loss(prediction, ground_truth):
+    return np.mean((prediction - ground_truth) ** 2)
+
+def mse_loss_derivative(prediction, ground_truth):
+    return 2 * (prediction - ground_truth) / len(prediction)
+
 class Layer:
-    def __init__(self, input_num, output_num, activation = 'sigmoid', optimizer = 'gd', learning_rate = 0.05):
+    def __init__(self, input_num, output_num, activation , optimizer , learning_rate ):
         self.weight = np.random.normal(0,1,(input_num +1 , output_num))
         self.activation = activation
         self.optimizer = optimizer
@@ -90,7 +97,7 @@ class Layer:
         self.forward_output = None
         if self.activation == 'sigmoid':
             self.forward_output = sigmoid(np.matmul(forward_value, self.weight))
-
+        self.forward_value = forward_value
         return self.forward_output
 
     def backward_pass(self, inputs):
@@ -100,12 +107,64 @@ class Layer:
 
         return np.matmul(self.backward_output, self.weight[:-1].T)
 
-    def learning(self):
-        gradient = np.matmul(self.forward_output.T, self.backward_output)
+    def learn(self):
+        gradient = np.matmul(self.forward_value.T, self.backward_output)
         if self.optimizer == 'gd':
             weight_change = -self.learning_rate * gradient
         self.weight += weight_change
 
+class NeuralNetwork:
+    def __init__(self,epoch, learning_rate, layers, inputs, hidden_units, activation, optimizer):
+        self.epoch = epoch
+        self.learning_rate = learning_rate
+        self.hidden_units = hidden_units
+        self.activation = activation
+        self.optimizer = optimizer
 
+        self.layers = [Layer(inputs, hidden_units, activation, optimizer, learning_rate)]
+
+        for i in range(layers -1):
+            self.layers.append(Layer(hidden_units, hidden_units, activation, optimizer, learning_rate))
+
+        self.layers.append(Layer(hidden_units, 1, activation, optimizer, learning_rate))
+
+    def forward(self, inputs):
+        for layer in self.layers:
+            inputs = layer.forward_pass(inputs)
+        return inputs
+
+    def backward(self, loss_derivative):
+        for layer in self.layers[::-1]:
+            loss_derivative = layer.backward_pass(loss_derivative)
+
+    def learn(self):
+        for layer in self.layers:
+            layer.learn()
+
+    def train(self, inputs, ground_truth):
+        for epoch in range(self.epoch):
+            prediction = self.forward(inputs)
+            loss = mse_loss(prediction, ground_truth)
+            self.backward(mse_loss_derivative(prediction, ground_truth))
+            self.learn()
+        
+            self.prediction = prediction
+            if epoch%100 == 0:
+                print(f'Epoch {epoch} loss : {loss}')
+            if loss < 0.001:
+                break
+def main():
+    inputs1, label1 = generate_linear()
+    inputs2, label2 = generate_XOR_easy()
+    
+    network = NeuralNetwork(epoch = 1000000, learning_rate = 0.01, layers = 2, inputs = 2, hidden_units = 4,
+                            activation = 'sigmoid', optimizer = 'gd')   
+    network.train(inputs1, label1)
+    show_result(inputs1, label1, network.prediction)
+    network.train(inputs2, label2)
+    show_result(inputs2, label2,network.prediction)
+
+if __name__ == '__main__':
+    main()
 # x1 = generate_XOR_easy()[0]
 # print(np.append(x1,np.ones((x1.shape[0],1)),axis=1))
