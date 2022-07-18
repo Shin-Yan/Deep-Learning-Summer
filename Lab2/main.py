@@ -29,6 +29,19 @@ class DeepConvNet(torch.nn.Module):
     def __init__(self, activation, dropout):
         super().__init__()
 
+def show_result(model, epochs, accuracy):
+def train(model, epochs, learning_rate, batch_size, optimizer, loss_function, dropout, train_device,
+            train_dataset, test_dataset):
+    models = {}
+    if(model == 'EEG'):
+        models['ELU'] = EEGNet(ELU,dropout = dropout).to(train_device)
+        models['ReLU'] = EEGNet(ReLU,dropout = dropout).to(train_device)
+        models['LeakyReLU'] = EEGNet(LeakyReLU,dropout = dropout).to(train_device)
+    elif(model == 'DeepConv'):
+        models['ELU'] = DeepConvNet(ELU,dropout = dropout).to(train_device)
+        models['ReLU'] = DeepConvNet(ReLU,dropout = dropout).to(train_device)
+        models['LeakyReLU'] = DeepConvNet(LeakyReLU,dropout = dropout).to(train_device)
+        
 def main():
     train_data, train_label, test_data, test_label = dataloader.read_bci_data()
     # print(train_data, train_label, test_data, test_label)
