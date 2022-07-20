@@ -4,3 +4,5 @@ data/
 test.py
 XOR*
 linear*
+__pycache__
+comparsion_result
