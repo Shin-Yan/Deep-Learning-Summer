@@ -30,27 +30,35 @@ class EEGNet(torch.nn.Module):
 class DeepConvNet(torch.nn.Module):
     def __init__(self, activation, dropout):
         super().__init__()
-    self.Conv1 = Sequential(Conv2d(1,25,kernel_size= (1,5), bias = False),
-                            Conv2d(25,25,kernel_size = (2,1), bias = False),
-                            BatchNorm2d(25, eps=1e-05, momentum=0.1),
-                            activation(),
-                            MaxPool2d(kernel_size = (1,2)),
-                            Dropout(p=dropout))
-    self.Conv2 = Sequential(Conv2d(25,50,kernel_size= (1,5), bias = False),
-                            BatchNorm2d(50, eps=1e-05, momentum=0.1),
-                            activation(),
-                            MaxPool2d(kernel_size = (1,2)),
-                            Dropout(p=dropout))
-    self.Conv3 = Sequential(Conv2d(50,100,kernel_size= (1,5), bias = False),
-                            BatchNorm2d(100, eps=1e-05, momentum=0.1),
-                            activation(),
-                            MaxPool2d(kernel_size = (1,2)),
-                            Dropout(p=dropout))
-    self.Conv4 = Sequential(Conv2d(100,200,kernel_size= (1,5), bias = False),
-                            BatchNorm2d(200, eps=1e-05, momentum=0.1),
-                            activation(),
-                            MaxPool2d(kernel_size = (1,2)),
-                            Dropout(p=dropout))
+        self.Conv1 = Sequential(Conv2d(1,25,kernel_size= (1,5), bias = False),
+                                Conv2d(25,25,kernel_size = (2,1), bias = False),
+                                BatchNorm2d(25, eps=1e-05, momentum=0.1),
+                                activation(),
+                                MaxPool2d(kernel_size = (1,2)),
+                                Dropout(p=dropout))
+        self.Conv2 = Sequential(Conv2d(25,50,kernel_size= (1,5), bias = False),
+                                BatchNorm2d(50, eps=1e-05, momentum=0.1),
+                                activation(),
+                                MaxPool2d(kernel_size = (1,2)),
+                                Dropout(p=dropout))
+        self.Conv3 = Sequential(Conv2d(50,100,kernel_size= (1,5), bias = False),
+                                BatchNorm2d(100, eps=1e-05, momentum=0.1),
+                                activation(),
+                                MaxPool2d(kernel_size = (1,2)),
+                                Dropout(p=dropout))
+        self.Conv4 = Sequential(Conv2d(100,200,kernel_size= (1,5), bias = False),
+                                BatchNorm2d(200, eps=1e-05, momentum=0.1),
+                                activation(),
+                                MaxPool2d(kernel_size = (1,2)),
+                                Dropout(p=dropout))
+        flatten_size = 8600
+        output_size = 2
+        self.classify = Sequential(Flatten(),Linear(in_features = flatten_size, out_features = output_size,bias = True))
+    def forwardPass(self, inputs):
+        for i in range(1,5):
+            inputs = getattr(self, f'Conv{i}')(inputs)
+        return self.classify(inputs)
+
 def show_result(model, epochs, accuracy_test, accuracy_train):
     plt.figure(0)
     if model == 'EEG':

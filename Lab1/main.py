@@ -199,7 +199,7 @@ def main():
     inputs1, label1 = generate_linear()
     inputs2, label2 = generate_XOR_easy()
     network = NeuralNetwork(epoch = 1000000, learning_rate = 0.05, layers = 2, inputs = 2, hidden_units = 4,
-                            activation ='leaky_relu',optimizer = 'gd')   
+                            activation ='sigmoid',optimizer = 'gd')   
     # prediction = network.train(inputs1, label1)
     # show_result(inputs1, label1, prediction,'linear.png')
     # network.show_learning_curve('linear')
@@ -211,5 +211,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# x1 = generate_XOR_easy()[0]
-# print(np.append(x1,np.ones((x1.shape[0],1)),axis=1))
