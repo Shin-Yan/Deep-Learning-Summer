@@ -3,6 +3,7 @@ from torch.utils import data
 import numpy as np
 import os
 import torchvision
+import PIL
 
 def getData(mode):
     if mode == 'train':
@@ -37,7 +38,9 @@ class RetinopathyLoader(data.Dataset):
     def __getitem__(self, index):
         """something you should implement here"""
         image_path = os.path.join(self.root, f'{self.img_name[index]}.jpeg')
-
+        label = self.label[index]
+        img = PIL.Image.open(fp = image_path)
+        
         """
            step1. Get the image path from 'self.img_name' and load it.
                   hint : path = root + self.img_name[index] + '.jpeg'
