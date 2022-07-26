@@ -40,7 +40,10 @@ class RetinopathyLoader(data.Dataset):
         image_path = os.path.join(self.root, f'{self.img_name[index]}.jpeg')
         label = self.label[index]
         img = PIL.Image.open(fp = image_path)
-        
+        trans = [torchvision.transforms.ToTensor()]
+        transform = torchvision.transforms.Compose(trans)
+        img = transform(img)
+        print(img)
         """
            step1. Get the image path from 'self.img_name' and load it.
                   hint : path = root + self.img_name[index] + '.jpeg'
